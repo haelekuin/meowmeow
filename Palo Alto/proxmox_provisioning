@@ -1,0 +1,12 @@
+localhost$ scp Pan-KVM-XX.X.X.qcow2 <hypervisor>:/tmp
+# Palo Alto VMs have varying hardware requirements based on your deployment profile. Enabling numa is optional
+proxmox$ sudo qm create <vmid> -cores <#> -memory <#> -name <hostname> -serial0 socket --numa 1
+# Import and add the disk
+sudo qm importdisk <vmid> /tmp/Pan-KVM-XX.X.X..qcow <storage>
+# Sometimes you will see the following error message after importing the disk image
+# vm 166 - unable to parse config: boot:
+# Never figured out the root cause, but deleting and importing the disk again fixed it so *shrug*
+sudo qm set <vmid> --virtio0 <storage>:vm-<vmid>-disk-0,format=raw
+sudo qm set <vmid> --boot order=virtio0
+# We set the CPU type to host for noticeably better performance
+sudo qm set <vmid> --cpu host
