@@ -1,0 +1,39 @@
+# Check IPSec / IKE logs
+less mp-log ikemgr.log
+# Follow the log file
+tail follow yes mp-log ikemgr.log
+# Turn on debug logging
+debug ike global on debug
+
+# Check Phase 1 Status
+show vpn ike-sa
+# Check Phase 1 Status of a single IKE-GW
+show vpn ike-sa gateway <ike-gateway name>
+# Check Phase 2 status
+show vpn ipsec-sa
+# Check Phase 2 status of a single IPSec-Tunnel
+show vpn ipsec-sa tunnel <ipsec-tunnel name>
+
+# Note: All VPN commands are able to be executed the same way. Omit the parts after tunnel / gateway to run it on all tunnels.
+
+# Send interesting traffic over the Phase 1 GW
+test vpn ike-sa gateway <ike-gateway name>
+# send interesting traffic over your ipsec-phase2 tunnel. ICMP doesn't bring it up, so a simple ping might not be enough!
+test vpn ipsec-sa tunnel <ipsec-tunnel name>
+# check if traffic is being transmitted through the tunnel
+show vpn flow name <tunnel.id/tunnel.name> | match bytes
+
+# Clear the Phase 1 GW. If it's up, the Phase 2 Tunnel will be cleared as well.
+clear vpn ike-sa gateway <ike-gateway name>
+# Clear the Phase 2 IPSec-Tunnel. Phase 1 will stay up.
+clear vpn ipsec-sa tunnel <ipsec-tunnel name>
+
+# Briefly list all tunnels
+show vpn flow
+# Show more detailed info of a single tunnel
+show vpn flow name <ipsec-tunnel name>
+# Check if traffic is going through the tunnel
+show vpn flow name <ipsec-tunnel name> | match bytes
+
+# check if your static route is configured correctly
+test routing fib-lookup virtual-router default ip <destination IP>
