@@ -24,5 +24,9 @@ $ sudo efibootmgr -v
 $ sudo bootctl
 ```
 
+## Interface order
+
+Interface order inside the Palo Alto VM is determined by the name of the interface. If you are mixing Virtio and PCI passthrough interfaces, you might need to adjust the name of the interface. See https://github.com/proxmox/qemu-server/blob/master/PVE/QemuServer/PCI.pm#L139 for the order in which they'll be loaded
+
 ## Configuration
 The Proxmox Wiki is pretty good there! https://pve.proxmox.com/wiki/PCI_Passthrough
